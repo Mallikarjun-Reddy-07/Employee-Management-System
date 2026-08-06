@@ -6,20 +6,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tcs.ems.dto.RegisterRequest;
+import com.tcs.ems.dto.VerifyOtpRequest;
+import com.tcs.ems.service.OtpService;
 import com.tcs.ems.service.UserService;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
+    private final OtpService otpService;
 
-    public UserController(UserService userService) {
+    // Constructor injection for both services
+    public UserController(UserService userService, OtpService otpService) {
         this.userService = userService;
+        this.otpService = otpService;
     }
 
     @PostMapping("/register")
-    private String register(@RequestBody RegisterRequest registerRequest) {
+    public String register(@RequestBody RegisterRequest registerRequest) {
         return userService.register(registerRequest);
+    }
+
+    @PostMapping("/verify-otp")
+    public String verifyOtp(@RequestBody VerifyOtpRequest verifyOtpRequest) {
+        return otpService.VerifyOtp(verifyOtpRequest);
     }
 }
