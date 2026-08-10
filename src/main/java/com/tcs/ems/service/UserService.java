@@ -4,6 +4,7 @@ package com.tcs.ems.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.tcs.ems.dto.RegisterRequest;
@@ -17,14 +18,19 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, EmailService emailService) {
-        super();
-        this.userRepository = userRepository;
-        this.emailService = emailService;
-    }
+    
 
-    public String register(RegisterRequest registerRequest) {
+    public UserService(UserRepository userRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
+		this.userRepository = userRepository;
+		this.emailService = emailService;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+
+
+	public String register(RegisterRequest registerRequest) {
         Optional<User> ou = userRepository.findByEmail(registerRequest.getEmail());
         if (ou.isPresent()) {
             return "email_id already exists";
@@ -32,7 +38,7 @@ public class UserService {
             User user = new User();
             user.setName(registerRequest.getName());
             user.setEmail(registerRequest.getEmail());
-            user.setPassword(registerRequest.getPassword());
+            user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
             user.setRole("USER_ROLE");
             user.setVerified(false);
 

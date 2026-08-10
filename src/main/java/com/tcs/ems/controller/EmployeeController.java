@@ -29,8 +29,8 @@ public class EmployeeController {
     @PostMapping
     public String createEmployee(
             @RequestBody Employee employee) {
-
-        return employeeService.createEmployee(employee);
+            return "data inserted";
+        //return employeeService.createEmployee(employee);
     }
 
     // GET EMPLOYEE BY ID

@@ -25,7 +25,8 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(@RequestBody RegisterRequest registerRequest) {
-        return userService.register(registerRequest);
+    	return "otp sent";
+      //  return userService.register(registerRequest);
     }
 
     @PostMapping("/verify-otp")
