@@ -1,84 +1,249 @@
-# ems-day1-day2-user-registration-email-otp
-Employee Management System (EMS) | Day 1: User Registration | Day 2: Email OTP Verification using Spring Boot, Spring Data JPA, JavaMailSender, and MySQL.
+# EMS – Day 6: Spring Security
 
+A Spring Boot-based **Employee Management System (EMS)** implementing Spring Security, HTTP Basic Authentication, user registration, OTP verification, and protected employee APIs.
 
-A Spring Boot-based Employee Management System (EMS) developed as a day-wise learning project.
+## 🚀 Features
 
-## 📅 Project Progress
-
-### ✅ Day 1 - User Registration
-
-- User Registration API
-- Save user details in MySQL
-- Duplicate email validation
-- Spring Data JPA integration
-- RESTful API implementation
-
-### ✅ Day 2 - Email OTP Verification
-
-- Generate secure 6-digit OTP
-- Send OTP via email using JavaMailSender
-- Store OTP in the database
-- OTP expiry (5 minutes)
-- Email verification during user registration
+* User Registration
+* Email OTP Verification
+* OTP Validation
+* Spring Security
+* HTTP Basic Authentication
+* Role-based Authorization
+* Admin and User Roles
+* Protected Employee APIs
+* RESTful APIs
+* Password Encryption
+* In-memory Authentication
 
 ## 🛠️ Technologies Used
 
-- Java 21
-- Spring Boot
-- Spring Web
-- Spring Data JPA
-- Spring Mail
-- MySQL
-- Lombok
-- Maven
+* Java 21
+* Spring Boot
+* Spring Security
+* Spring Web
+* Spring Data JPA
+* Hibernate
+* MySQL
+* Maven
+* JavaMailSender
+* Git & GitHub
 
-## 📂 Project Structure
+## 🔐 Security
 
+The application uses **Spring Security** with HTTP Basic Authentication.
+
+### Public APIs
+
+```text
+POST /users/register
+POST /users/verify-otp
 ```
-src
-├── controller
-├── dto
-├── entity
-├── repository
-├── service
-└── util
+
+These APIs are accessible without authentication.
+
+### Protected APIs
+
+```text
+/employees/**
 ```
 
-## 🚀 API Endpoint
+Employee APIs require authentication.
 
-### Register User
+## 👤 Default Users
+
+### Admin
+
+```text
+Username: admin
+Password: admin123
+Role: ADMIN
+```
+
+### User
+
+```text
+Username: user
+Password: user123
+Role: USER
+```
+
+Passwords are encoded using `PasswordEncoder`.
+
+## 📌 API Endpoints
+
+### 1. Register User
 
 ```http
 POST /users/register
 ```
 
-#### Request Body
+Example request:
 
 ```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123"
+  "name": "Madiha",
+  "email": "madiha@gmail.com",
+  "password": "123456"
 }
 ```
 
-#### Response
+### 2. Verify OTP
 
+```http
+POST /users/verify-otp
 ```
-Please check your email for OTP.
+
+Example request:
+
+```json
+{
+  "email": "madiha@gmail.com",
+  "otp": "123456"
+}
 ```
 
-## 📌 Upcoming Days
+### 3. Employee APIs
 
-- 🔄 Day 3 - OTP Verification API
-- 🔐 Day 4 - Spring Security & BCrypt Password Encryption
-- 🔑 Day 5 - JWT Authentication
-- 👤 Day 6 - Login API
-- 🔁 Day 7 - Forgot Password & Resend OTP
-- 🧑‍💼 Employee CRUD Operations
-- 🎭 Role-Based Authorization
+```text
+GET    /employees
+GET    /employees/{id}
+POST   /employees
+PUT    /employees/{id}
+DELETE /employees/{id}
+```
+
+Authentication is required for employee APIs.
+
+## 📂 Project Structure
+
+```text
+src
+└── main
+    └── java
+        └── com.tcs.ems
+            ├── config
+            │   └── SecurityConfig.java
+            │
+            ├── controller
+            │   ├── UserController.java
+            │   └── EmployeeController.java
+            │
+            ├── dto
+            │   ├── RegisterRequest.java
+            │   └── VerifyOtpRequest.java
+            │
+            ├── service
+            │   ├── UserService.java
+            │   └── OtpService.java
+            │
+            ├── entity
+            │   └── Employee.java
+            │
+            └── repository
+                └── EmployeeRepository.java
+```
+
+## 🔑 Security Configuration
+
+Registration and OTP verification are publicly accessible:
+
+```java
+.requestMatchers(
+    "/users/register",
+    "/users/verify-otp"
+).permitAll()
+```
+
+Employee APIs require authentication:
+
+```java
+.requestMatchers("/employees/**").authenticated()
+```
+
+HTTP Basic Authentication:
+
+```java
+.httpBasic(Customizer.withDefaults());
+```
+
+## ▶️ How to Run
+
+### Clone the repository
+
+```bash
+git clone https://github.com/madihaazamahmed-droid/ems-day6-spring-security.git
+```
+
+### Navigate to the project
+
+```bash
+cd ems-day6-spring-security
+```
+
+### Configure MySQL
+
+Create the database:
+
+```sql
+CREATE DATABASE ems;
+```
+
+Update your `application.properties` with your MySQL credentials.
+
+### Run the application
+
+```bash
+mvn spring-boot:run
+```
+
+Or run the application from IntelliJ IDEA or Eclipse.
+
+## 🧪 Testing
+
+Use **Postman** or **Thunder Client** to test the APIs.
+
+For protected employee APIs, use:
+
+```text
+Authentication Type: Basic Auth
+
+Username: admin
+Password: admin123
+```
+
+## 🔒 Authentication Flow
+
+```text
+User
+  ↓
+Register
+  ↓
+OTP Sent
+  ↓
+Verify OTP
+  ↓
+User Verified
+  ↓
+Authentication
+  ↓
+Access Employee APIs
+```
+
+## 📈 Future Enhancements
+
+* JWT Authentication
+* Database-based User Authentication
+* Role-Based Endpoint Authorization
+* Refresh Tokens
+* Forgot Password
+* Resend OTP
+* Global Exception Handling
+* Swagger/OpenAPI Documentation
+* Docker Deployment
 
 ## 👩‍💻 Author
 
 **Madiha Azam Ahmed**
+
+Java Full Stack Developer | Spring Boot | React.js | MySQL
