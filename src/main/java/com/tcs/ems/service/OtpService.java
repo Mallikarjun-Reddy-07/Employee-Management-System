@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.tcs.ems.dto.VerifyOtpRequest;
 import com.tcs.ems.entity.User;
+import com.tcs.ems.exception.InvalidOtpException;
+import com.tcs.ems.exception.UserNotFoundException;
 import com.tcs.ems.repository.UserRepository;
 
 @Service
@@ -23,7 +25,7 @@ public class OtpService {
 		if(optionaluser.isPresent()) {
 			User user=optionaluser.get();
 			if(!user.getOtp().equals(verifyOtpRequest.getOtp())) {
-				return "Invalid Otp";
+				 throw new InvalidOtpException("Invalid Otp");
 			}
 			
 			if(LocalDateTime.now().isAfter(user.getOtpexpirytime())) {
@@ -39,7 +41,7 @@ public class OtpService {
 			}
 			
 		}else {
-			return "User Not Found";
+			throw new UserNotFoundException( "no user found");
 		}
 	}
 	
