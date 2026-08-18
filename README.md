@@ -1,249 +1,150 @@
-# EMS – Day 6: Spring Security
+# EMS - Day 11: Validation & Global Exception Handling
 
-A Spring Boot-based **Employee Management System (EMS)** implementing Spring Security, HTTP Basic Authentication, user registration, OTP verification, and protected employee APIs.
+## 📌 Project Overview
+
+This project is part of the **Employee Management System (EMS)** series developed using **Spring Boot**.
+
+Day 11 focuses on implementing **Bean Validation and Global Exception Handling** to provide proper validation messages and handle application exceptions in a centralized way.
 
 ## 🚀 Features
 
-* User Registration
-* Email OTP Verification
-* OTP Validation
-* Spring Security
-* HTTP Basic Authentication
-* Role-based Authorization
-* Admin and User Roles
-* Protected Employee APIs
-* RESTful APIs
-* Password Encryption
-* In-memory Authentication
+* Employee validation using Jakarta Bean Validation
+* Email format validation
+* Required field validation
+* Salary validation
+* Global exception handling using `@RestControllerAdvice`
+* Custom exception handling using `@ExceptionHandler`
+* Validation error handling using `MethodArgumentNotValidException`
+* Custom responses with appropriate HTTP status codes
 
 ## 🛠️ Technologies Used
 
 * Java 21
 * Spring Boot
-* Spring Security
 * Spring Web
 * Spring Data JPA
 * Hibernate
 * MySQL
+* Jakarta Validation
+* Lombok
 * Maven
-* JavaMailSender
 * Git & GitHub
 
-## 🔐 Security
+## 📂 Validations Implemented
 
-The application uses **Spring Security** with HTTP Basic Authentication.
+| Field      | Validation            |
+| ---------- | --------------------- |
+| Email      | `@Email`, `@NotBlank` |
+| Name       | `@NotBlank`           |
+| Salary     | `@PositiveOrZero`     |
+| Department | `@NotBlank`           |
 
-### Public APIs
+## ⚠️ Exception Handling
 
-```text
-POST /users/register
-POST /users/verify-otp
+The application handles exceptions such as:
+
+* `MethodArgumentNotValidException`
+* `UserNotFoundException`
+* `InvalidOtpException`
+* `OtpVerifiedException`
+* `OtpExpiredException`
+* `OtpAlreadyVerified`
+
+Global exception handling is implemented using:
+
+```java
+@RestControllerAdvice
 ```
 
-These APIs are accessible without authentication.
+and
 
-### Protected APIs
-
-```text
-/employees/**
+```java
+@ExceptionHandler
 ```
 
-Employee APIs require authentication.
-
-## 👤 Default Users
-
-### Admin
-
-```text
-Username: admin
-Password: admin123
-Role: ADMIN
-```
-
-### User
-
-```text
-Username: user
-Password: user123
-Role: USER
-```
-
-Passwords are encoded using `PasswordEncoder`.
-
-## 📌 API Endpoints
-
-### 1. Register User
-
-```http
-POST /users/register
-```
-
-Example request:
+## 📋 Example Validation Request
 
 ```json
 {
-  "name": "Madiha",
-  "email": "madiha@gmail.com",
-  "password": "123456"
+    "email": "abc",
+    "name": "",
+    "salary": -500,
+    "department": ""
 }
 ```
 
-### 2. Verify OTP
-
-```http
-POST /users/verify-otp
-```
-
-Example request:
+### Example Response
 
 ```json
 {
-  "email": "madiha@gmail.com",
-  "otp": "123456"
+    "email": "enter valid email id",
+    "name": "it cannot be null, empty, space",
+    "salary": "salary should be >= 0",
+    "department": "it cannot be null, empty, space"
 }
 ```
 
-### 3. Employee APIs
-
-```text
-GET    /employees
-GET    /employees/{id}
-POST   /employees
-PUT    /employees/{id}
-DELETE /employees/{id}
-```
-
-Authentication is required for employee APIs.
-
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```text
 src
 └── main
     └── java
         └── com.tcs.ems
-            ├── config
-            │   └── SecurityConfig.java
-            │
             ├── controller
-            │   ├── UserController.java
-            │   └── EmployeeController.java
-            │
-            ├── dto
-            │   ├── RegisterRequest.java
-            │   └── VerifyOtpRequest.java
-            │
-            ├── service
-            │   ├── UserService.java
-            │   └── OtpService.java
-            │
             ├── entity
-            │   └── Employee.java
-            │
-            └── repository
-                └── EmployeeRepository.java
-```
-
-## 🔑 Security Configuration
-
-Registration and OTP verification are publicly accessible:
-
-```java
-.requestMatchers(
-    "/users/register",
-    "/users/verify-otp"
-).permitAll()
-```
-
-Employee APIs require authentication:
-
-```java
-.requestMatchers("/employees/**").authenticated()
-```
-
-HTTP Basic Authentication:
-
-```java
-.httpBasic(Customizer.withDefaults());
+            ├── repository
+            ├── service
+            └── exception
+                ├── GlobalExceptionHandling.java
+                ├── UserNotFoundException.java
+                ├── InvalidOtpException.java
+                ├── OtpVerifiedException.java
+                ├── OtpExpiredException.java
+                └── OtpAlreadyVerified.java
 ```
 
 ## ▶️ How to Run
 
-### Clone the repository
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/madihaazamahmed-droid/ems-day6-spring-security.git
+git clone https://github.com/madihaazamahmed-droid/ems-day11-validation-exception-handling.git
 ```
 
-### Navigate to the project
+### 2. Open the project
 
-```bash
-cd ems-day6-spring-security
-```
+Open the project in **Eclipse** or **IntelliJ IDEA**.
 
-### Configure MySQL
+### 3. Configure MySQL
 
-Create the database:
-
-```sql
-CREATE DATABASE ems;
-```
-
-Update your `application.properties` with your MySQL credentials.
-
-### Run the application
-
-```bash
-mvn spring-boot:run
-```
-
-Or run the application from IntelliJ IDEA or Eclipse.
-
-## 🧪 Testing
-
-Use **Postman** or **Thunder Client** to test the APIs.
-
-For protected employee APIs, use:
+Update your database details in:
 
 ```text
-Authentication Type: Basic Auth
-
-Username: admin
-Password: admin123
+src/main/resources/application.properties
 ```
 
-## 🔒 Authentication Flow
+### 4. Run the application
 
-```text
-User
-  ↓
-Register
-  ↓
-OTP Sent
-  ↓
-Verify OTP
-  ↓
-User Verified
-  ↓
-Authentication
-  ↓
-Access Employee APIs
-```
+Run the Spring Boot application.
 
-## 📈 Future Enhancements
+The APIs can be tested using **Postman**.
 
-* JWT Authentication
-* Database-based User Authentication
-* Role-Based Endpoint Authorization
-* Refresh Tokens
-* Forgot Password
-* Resend OTP
-* Global Exception Handling
-* Swagger/OpenAPI Documentation
-* Docker Deployment
+## 🎯 Day 11 Learning
+
+Through this project, I learned how to:
+
+* Implement Jakarta Bean Validation
+* Create custom validation messages
+* Handle validation errors globally
+* Create custom exceptions
+* Use `@RestControllerAdvice`
+* Use `@ExceptionHandler`
+* Return appropriate HTTP status codes
+* Build cleaner and more maintainable Spring Boot applications
 
 ## 👩‍💻 Author
 
 **Madiha Azam Ahmed**
 
-Java Full Stack Developer | Spring Boot | React.js | MySQL
+GitHub: `madihaazamahmed-droid`
