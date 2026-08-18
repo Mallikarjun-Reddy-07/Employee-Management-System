@@ -14,12 +14,10 @@ import com.tcs.ems.service.UserService;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
     private final OtpService otpService;
 
     // Constructor injection for both services
     public UserController(UserService userService, OtpService otpService) {
-        this.userService = userService;
         this.otpService = otpService;
     }
 
@@ -31,6 +29,6 @@ public class UserController {
 
     @PostMapping("/verify-otp")
     public String verifyOtp(@RequestBody VerifyOtpRequest verifyOtpRequest) {
-        return otpService.VerifyOtp(verifyOtpRequest);
+        return otpService.verifyOtp(verifyOtpRequest);
     }
 }
